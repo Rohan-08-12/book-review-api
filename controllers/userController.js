@@ -3,7 +3,7 @@ const express=require('express');
 const userRouter=express.Router();
 const User=require('../models/UserModel');
 
-userRouter.post('/register',async(req,res)=>{
+const registerUser = async(req,res)=>{
     const {username,email,password , role}=req.body;
     try{
         const userExist=await User.findOne({email});
@@ -32,9 +32,9 @@ userRouter.post('/register',async(req,res)=>{
             error:err.message
         })
     }
-})
+}
 
-userRouter.post('/login', async (req, res) => {
+const loginUser=async (req, res) => {
     const { email, password } = req.body; 
 
     try {
@@ -77,9 +77,9 @@ userRouter.post('/login', async (req, res) => {
             error: err.message
         });
     }
-});
+}
 
-userRouter.post('/logout', async (req, res) => {
+const logoutUser=async (req, res) => {
     try {
         
         return res.status(200).json({
@@ -93,7 +93,7 @@ userRouter.post('/logout', async (req, res) => {
             error: err.message
         });
     }
-});
+}
 
-module.exports=userRouter;
 
+module.exports={registerUser,loginUser,logoutUser};

@@ -4,8 +4,7 @@ const bookRouter=express.Router();
 const Book=require('../models/bookModel');
 const {authMiddleware,adminMiddleware}=require('../middleware/authMiddleware');
 
-// api to add book (admin)
-bookRouter.post('/add-book',authMiddleware,adminMiddleware,async(req,res)=>{
+const addBook=async(req,res)=>{
     try{
         const {title,author,genre,description,imageUrl}=req.body;
         const bookExists=await Book.findOne({title});
@@ -35,11 +34,9 @@ bookRouter.post('/add-book',authMiddleware,adminMiddleware,async(req,res)=>{
             error:err.message
         })
     }
-})
+};
 
-
-// api to get all books (have filters)
-bookRouter.get('/',authMiddleware,async(req,res)=>{
+const getAllBooks=async(req,res)=>{
     try{
         // extracting 
         const {page=1,limit=10,sortBy='title',order='asc',genre,author}=req.query;
@@ -86,10 +83,9 @@ bookRouter.get('/',authMiddleware,async(req,res)=>{
             error:err.message
         })
     }
-})
+}
 
-// api to get single book
-bookRouter.get('/:id',authMiddleware,async(req,res)=>{
+const getBook=async(req,res)=>{
     try{
 
         const book=await Book.findById(req.params.id);
@@ -111,10 +107,9 @@ bookRouter.get('/:id',authMiddleware,async(req,res)=>{
             error:err.message
         })
     }
-})
+}
 
-// api to edit book
-bookRouter.put('/:id/edit-book',authMiddleware,adminMiddleware,async(req,res)=>{
+const editBook=async(req,res)=>{
     try{
         const {title,author,genre,description,imageUrl}=req.body;
         const book=await Book.findById(req.params.id);
@@ -142,10 +137,9 @@ bookRouter.put('/:id/edit-book',authMiddleware,adminMiddleware,async(req,res)=>{
             error:err.message
         })
     }
-})
+}
 
-// api to delete book
-bookRouter.delete('/:id/delete-book',authMiddleware,adminMiddleware,async(req,res)=>{
+const deleteBook=async(req,res)=>{
     try{
         await Book.findByIdAndDelete(req.params.id);
         return res.status(200).json({
@@ -159,6 +153,6 @@ bookRouter.delete('/:id/delete-book',authMiddleware,adminMiddleware,async(req,re
             error:err.message
         })
     }
-})
+}
 
-module.exports=bookRouter;
+module.exports={addBook,getAllBooks,getBook,editBook,deleteBook};
