@@ -3,7 +3,7 @@ const express=require('express');
 const userRouter=express.Router();
 const User=require('../models/UserModel');
 
-const registerUser = async(req,res)=>{
+const registerUser = async(req,res,next)=>{
     const {username,email,password , role}=req.body;
     try{
         const userExist=await User.findOne({email});
@@ -26,15 +26,11 @@ const registerUser = async(req,res)=>{
             })
         }
     }catch(err){
-        return res.status(500).json({
-            success:false,
-            message:"user registration failed",
-            error:err.message
-        })
+        next(err);
     }
 }
 
-const loginUser=async (req, res) => {
+const loginUser=async (req, res,next    ) => {
     const { email, password } = req.body; 
 
     try {
@@ -70,16 +66,11 @@ const loginUser=async (req, res) => {
         }); 
 
     } catch (err) {
-        console.log("err",err);
-        return res.status(500).json({
-            success: false,
-            message: "User login failed",
-            error: err.message
-        });
+        next(err);
     }
 }
 
-const logoutUser=async (req, res) => {
+const logoutUser=async (req, res,next) => {
     try {
         
         return res.status(200).json({
@@ -87,11 +78,7 @@ const logoutUser=async (req, res) => {
             message: "User logged out successfully"
         });
     } catch (err) {
-        return res.status(500).json({
-            success: false,
-            message: "User logout failed",
-            error: err.message
-        });
+        next(err);
     }
 }
 

@@ -2,9 +2,9 @@ const express=require('express');
 const bookRouter=express.Router();
 
 const Book=require('../models/bookModel');
-const {authMiddleware,adminMiddleware}=require('../middleware/authMiddleware');
 
-const addBook=async(req,res)=>{
+
+const addBook=async(req,res,next)=>{
     try{
         const {title,author,genre,description,imageUrl}=req.body;
         const bookExists=await Book.findOne({title});
@@ -28,15 +28,11 @@ const addBook=async(req,res)=>{
             book
         })
     }catch(err){
-        return res.status(500).json({
-            success:false,
-            message:"Book addition failed",
-            error:err.message
-        })
+        next(err);
     }
 };
 
-const getAllBooks=async(req,res)=>{
+const getAllBooks=async(req,res,next)=>{
     try{
         // extracting 
         const {page=1,limit=10,sortBy='title',order='asc',genre,author}=req.query;
@@ -77,15 +73,11 @@ const getAllBooks=async(req,res)=>{
         })
 
     }catch(err){
-        return res.status(500).json({
-            success:false,
-            message:"Fetching books failed",
-            error:err.message
-        })
+        next(err);
     }
 }
 
-const getBook=async(req,res)=>{
+const getBook=async(req,res,next)=>{
     try{
 
         const book=await Book.findById(req.params.id);
@@ -101,15 +93,11 @@ const getBook=async(req,res)=>{
             book
         })
     }catch(err){
-        return res.status(500).json({
-            success:false,
-            message:"Fetching book failed",
-            error:err.message
-        })
+        next(err);
     }
 }
 
-const editBook=async(req,res)=>{
+const editBook=async(req,res,next)=>{
     try{
         const {title,author,genre,description,imageUrl}=req.body;
         const book=await Book.findById(req.params.id);
@@ -131,15 +119,11 @@ const editBook=async(req,res)=>{
             book
         })
     }catch(err){
-        return res.status(500).json({
-            success:false,
-            message:"Book edit failed",
-            error:err.message
-        })
+        next(err);
     }
 }
 
-const deleteBook=async(req,res)=>{
+const deleteBook=async(req,res,next)=>{
     try{
         await Book.findByIdAndDelete(req.params.id);
         return res.status(200).json({
@@ -147,11 +131,7 @@ const deleteBook=async(req,res)=>{
             message:"Book deleted successfully"
         })
     }catch(err){
-        return res.status(500).json({
-            success:false,
-            message:"Book deletion failed",
-            error:err.message
-        })
+        next(err);
     }
 }
 
